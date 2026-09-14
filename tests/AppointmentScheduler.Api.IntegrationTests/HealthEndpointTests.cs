@@ -12,7 +12,7 @@ public class HealthEndpointTests : IClassFixture<WebApplicationFactory<Program>>
     public HealthEndpointTests(WebApplicationFactory<Program> factory) => _factory = factory;
 
     [Fact]
-    public async Task Health_returns_200()
+    public async Task Get_HealthEndpoint_ReturnsOk()
     {
         using var client = _factory.CreateClient();
 
@@ -22,7 +22,7 @@ public class HealthEndpointTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task Health_reports_healthy()
+    public async Task Get_HealthEndpoint_ReportsHealthy()
     {
         using var client = _factory.CreateClient();
 

@@ -9,14 +9,14 @@ public class ArchitectureTests
     private static readonly Assembly Application = typeof(AssemblyMarker).Assembly;
 
     [Fact]
-    public void Application_does_not_reference_EntityFrameworkCore()
+    public void GetReferencedAssemblies_ApplicationAssembly_DoesNotContainEntityFrameworkCore()
     {
         Application.GetReferencedAssemblies()
                    .Should().NotContain(a => a.Name!.StartsWith("Microsoft.EntityFrameworkCore", StringComparison.Ordinal));
     }
 
     [Fact]
-    public void Application_does_not_reference_Infrastructure_or_Api()
+    public void GetReferencedAssemblies_ApplicationAssembly_DoesNotContainInfrastructureOrApi()
     {
         var forbidden = new[] { "AppointmentScheduler.Infrastructure", "AppointmentScheduler.Api" };
 
