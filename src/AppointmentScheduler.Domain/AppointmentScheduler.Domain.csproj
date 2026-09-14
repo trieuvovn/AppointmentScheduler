@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- No project references and no NuGet packages, by design.
+       AppointmentScheduler.Domain.Tests asserts this stays true. -->
+
+</Project>

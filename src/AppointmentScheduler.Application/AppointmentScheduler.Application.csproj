@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\AppointmentScheduler.Domain\AppointmentScheduler.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

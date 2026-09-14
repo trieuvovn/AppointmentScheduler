@@ -1,0 +1,14 @@
+<Project>
+
+  <!-- Inherit the repo-wide settings, then relax what only makes sense for production code. -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+    <!-- CA1707: underscores in member names. Test names are sentences by convention
+         (Health_returns_200), which is precisely what this rule forbids. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+</Project>

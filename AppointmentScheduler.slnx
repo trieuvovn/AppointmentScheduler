@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AppointmentScheduler.Api/AppointmentScheduler.Api.csproj" Id="30299685-01e8-4e9f-96cd-f0ee80e725a0" />
+    <Project Path="src/AppointmentScheduler.Application/AppointmentScheduler.Application.csproj" />
+    <Project Path="src/AppointmentScheduler.DatabaseMigration/AppointmentScheduler.DatabaseMigration.csproj" />
+    <Project Path="src/AppointmentScheduler.Domain/AppointmentScheduler.Domain.csproj" />
+    <Project Path="src/AppointmentScheduler.Infrastructure/AppointmentScheduler.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AppointmentScheduler.Api.IntegrationTests/AppointmentScheduler.Api.IntegrationTests.csproj" Id="dcc37e49-d8f4-4e17-8e49-86b8241ce256" />
+    <Project Path="tests/AppointmentScheduler.Application.Tests/AppointmentScheduler.Application.Tests.csproj" Id="0a46122d-4a46-4e70-9bf3-c88fa157fb5f" />
+    <Project Path="tests/AppointmentScheduler.Domain.Tests/AppointmentScheduler.Domain.Tests.csproj" Id="c29ab5d5-6ad5-4857-a383-d2e02555fc8a" />
+  </Folder>
+</Solution>

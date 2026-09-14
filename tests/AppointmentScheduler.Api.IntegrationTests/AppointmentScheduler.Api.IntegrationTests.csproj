@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Testcontainers.MsSql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AppointmentScheduler.Api\AppointmentScheduler.Api.csproj" />
+    <ProjectReference Include="..\..\src\AppointmentScheduler.DatabaseMigration\AppointmentScheduler.DatabaseMigration.csproj" />
+  </ItemGroup>
+
+</Project>
