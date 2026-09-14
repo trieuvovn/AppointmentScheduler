@@ -2,9 +2,23 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <RootNamespace>AppointmentScheduler.DatabaseMigration</RootNamespace>
   </PropertyGroup>
 
-  <!-- Standalone: references no other project in the solution (plan 3.4).
-       DbUp and the Scripts/ tree arrive in Stage 2. -->
+  <!-- Standalone: references no other project in the solution (plan 3.4). It is SQL plus
+       DbUp, so it sits outside the Clean Architecture dependency graph rather than bending it. -->
+  <ItemGroup>
+    <PackageReference Include="dbup-sqlserver" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+  </ItemGroup>
+
+  <!-- Scripts must be EmbeddedResource, not Content: DbUp discovers them by resource name,
+       and a script shipped as Content silently never runs (plan 3.4). -->
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\**\*.sql" />
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
 </Project>
