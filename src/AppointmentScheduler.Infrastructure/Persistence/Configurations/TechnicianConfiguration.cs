@@ -1,4 +1,3 @@
-using AppointmentScheduler.Domain.Common;
 using AppointmentScheduler.Domain.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -19,14 +18,16 @@ internal sealed class TechnicianConfiguration : IEntityTypeConfiguration<Technic
         builder.Property(t => t.FullName).IsRequired();
         builder.Property(t => t.IsActive).IsRequired();
         builder.Property(t => t.Version).IsConcurrencyToken();
-        builder.OwnsMany<EntityReference>("_skillIds", skills =>
-        {
-            skills.ToTable("TechnicianSkills");
-            skills.WithOwner().HasForeignKey("TechnicianId");
-            skills.HasKey("TechnicianId", nameof(EntityReference.Id));
-            skills.Property(s => s.Id).HasColumnName("SkillId");
-        });
 
-        builder.Navigation("_skillIds").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.HasMany(t => t.Skills)
+               .WithMany()
+               .UsingEntity(
+                   "TechnicianSkills",
+                   right => right.HasOne(typeof(Skill)).WithMany().HasForeignKey("SkillId"),
+                   left => left.HasOne(typeof(Technician)).WithMany().HasForeignKey("TechnicianId"));
+
+        builder.Navigation(t => t.Skills)
+               .HasField("_skills")
+               .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

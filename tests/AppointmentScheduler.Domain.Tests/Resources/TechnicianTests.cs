@@ -7,14 +7,14 @@ namespace AppointmentScheduler.Domain.Tests.Resources;
 
 public class TechnicianTests
 {
-    private static readonly Guid Diagnostics = Guid.NewGuid();
-    private static readonly Guid Electrical = Guid.NewGuid();
+    private static readonly Skill Diagnostics = Skill.Create(Guid.NewGuid(), "DIAG", "Diagnostics");
+    private static readonly Skill Electrical = Skill.Create(Guid.NewGuid(), "ELEC", "Electrical");
 
-    private static Technician Holding(params Guid[] skillIds) =>
-        Technician.Create(Guid.NewGuid(), Guid.NewGuid(), "Sam Rivera", skillIds: skillIds);
+    private static Technician Holding(params Skill[] skills) =>
+        Technician.Create(Guid.NewGuid(), Guid.NewGuid(), "Sam Rivera", skills: skills);
 
-    private static ServiceType Requiring(params Guid[] skillIds) =>
-        ServiceType.Create(Guid.NewGuid(), "SVC", "Service", 60, requiredSkillIds: skillIds);
+    private static ServiceType Requiring(params Skill[] skills) =>
+        ServiceType.Create(Guid.NewGuid(), "SVC", "Service", 60, requiredSkills: skills);
 
     [Fact]
     public void IsQualifiedFor_TechnicianHoldingEveryRequiredSkill_ReturnsTrue()
@@ -53,16 +53,16 @@ public class TechnicianTests
     }
 
     [Fact]
-    public void SkillIds_DuplicateSkillsGivenAtCreation_AreDeduplicated()
+    public void Skills_DuplicateSkillsGivenAtCreation_AreDeduplicated()
     {
-        Holding(Diagnostics, Diagnostics).SkillIds.Should().ContainSingle();
+        Holding(Diagnostics, Diagnostics).Skills.Should().ContainSingle();
     }
 
     [Fact]
-    public void SkillIds_NoSkillsGivenAtCreation_DefaultsToEmpty()
+    public void Skills_NoSkillsGivenAtCreation_DefaultsToEmpty()
     {
         Technician.Create(Guid.NewGuid(), Guid.NewGuid(), "Sam Rivera")
-                  .SkillIds.Should().BeEmpty();
+                  .Skills.Should().BeEmpty();
     }
 
     [Fact]

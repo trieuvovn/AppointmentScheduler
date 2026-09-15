@@ -8,7 +8,7 @@ namespace AppointmentScheduler.Domain.Resources;
 /// </summary>
 public sealed class Technician : IVersioned
 {
-    private readonly List<EntityReference> _skillIds = [];
+    private readonly List<Skill> _skills = [];
 
     private Technician(Guid id, Guid dealershipId, string fullName, bool isActive)
     {
@@ -35,23 +35,25 @@ public sealed class Technician : IVersioned
     /// <inheritdoc />
     public int Version { get; set; }
 
-    /// <summary>The skills this technician holds.</summary>
-    public IReadOnlyList<Guid> SkillIds => [.. _skillIds.Select(s => s.Id)];
+    /// <summary>
+    /// The skills this technician holds, joined through <c>TechnicianSkills</c>.
+    /// </summary>
+    public IReadOnlyCollection<Skill> Skills => _skills;
 
     public static Technician Create(
         Guid id,
         Guid dealershipId,
         string fullName,
         bool isActive = true,
-        IEnumerable<Guid>? skillIds = null)
+        IEnumerable<Skill>? skills = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
 
         var technician = new Technician(id, dealershipId, fullName, isActive);
 
-        if (skillIds is not null)
+        if (skills is not null)
         {
-            technician._skillIds.AddRange(skillIds.Distinct().Select(id => new EntityReference(id)));
+            technician._skills.AddRange(skills.DistinctBy(skill => skill.Id));
         }
 
         return technician;
@@ -62,6 +64,6 @@ public sealed class Technician : IVersioned
     {
         ArgumentNullException.ThrowIfNull(serviceType);
 
-        return serviceType.IsSatisfiedBy(SkillIds);
+        return serviceType.IsSatisfiedBy(_skills);
     }
 }

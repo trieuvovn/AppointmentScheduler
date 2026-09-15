@@ -1,5 +1,5 @@
 using AppointmentScheduler.Domain.Catalogue;
-using AppointmentScheduler.Domain.Common;
+using AppointmentScheduler.Domain.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -20,14 +20,15 @@ internal sealed class ServiceTypeConfiguration : IEntityTypeConfiguration<Servic
         builder.Property(s => s.DurationMinutes).IsRequired();
         builder.Property(s => s.IsActive).IsRequired();
 
-        builder.OwnsMany<EntityReference>("_requiredSkillIds", skills =>
-        {
-            skills.ToTable("ServiceTypeRequiredSkills");
-            skills.WithOwner().HasForeignKey("ServiceTypeId");
-            skills.HasKey("ServiceTypeId", nameof(EntityReference.Id));
-            skills.Property(s => s.Id).HasColumnName("SkillId");
-        });
+        builder.HasMany(s => s.RequiredSkills)
+               .WithMany()
+               .UsingEntity(
+                   "ServiceTypeRequiredSkills",
+                   right => right.HasOne(typeof(Skill)).WithMany().HasForeignKey("SkillId"),
+                   left => left.HasOne(typeof(ServiceType)).WithMany().HasForeignKey("ServiceTypeId"));
 
-        builder.Navigation("_requiredSkillIds").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.Navigation(s => s.RequiredSkills)
+               .HasField("_requiredSkills")
+               .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

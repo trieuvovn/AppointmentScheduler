@@ -1,4 +1,4 @@
-using AppointmentScheduler.Domain.Common;
+using AppointmentScheduler.Domain.Resources;
 
 namespace AppointmentScheduler.Domain.Catalogue;
 
@@ -10,9 +10,7 @@ public sealed class ServiceType
     /// <summary>The longest service the catalogue permits.</summary>
     public const int MaximumDurationMinutes = 8 * 60;
 
-    // Backed by EntityReference rather than Guid so the ServiceTypeRequiredSkills link table has a
-    // type to map onto; RequiredSkillIds projects it away, so no caller sees the difference.
-    private readonly List<EntityReference> _requiredSkillIds = [];
+    private readonly List<Skill> _requiredSkills = [];
 
     private ServiceType(Guid id, string code, string name, int durationMinutes, bool isActive)
     {
@@ -40,8 +38,7 @@ public sealed class ServiceType
 
     public bool IsActive { get; private set; }
 
-    /// <summary>The skills a technician must all hold to perform this service.</summary>
-    public IReadOnlyList<Guid> RequiredSkillIds => [.. _requiredSkillIds.Select(s => s.Id)];
+    public IReadOnlyCollection<Skill> RequiredSkills => _requiredSkills;
 
     /// <summary>The duration as a <see cref="TimeSpan"/>, which is what <c>TimeSlot</c> consumes.</summary>
     public TimeSpan Duration => TimeSpan.FromMinutes(DurationMinutes);
@@ -52,7 +49,7 @@ public sealed class ServiceType
         string name,
         int durationMinutes,
         bool isActive = true,
-        IEnumerable<Guid>? requiredSkillIds = null)
+        IEnumerable<Skill>? requiredSkills = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(code);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
@@ -67,23 +64,28 @@ public sealed class ServiceType
 
         var serviceType = new ServiceType(id, code, name, durationMinutes, isActive);
 
-        if (requiredSkillIds is not null)
+        if (requiredSkills is not null)
         {
-            serviceType._requiredSkillIds.AddRange(
-                requiredSkillIds.Distinct().Select(id => new EntityReference(id)));
+            serviceType._requiredSkills.AddRange(requiredSkills.DistinctBy(skill => skill.Id));
         }
 
         return serviceType;
     }
 
     /// <summary>
-    /// True when <paramref name="technicianSkillIds"/> covers every skill this service requires.
+    /// True when <paramref name="technicianSkills"/> covers every skill this service requires.
     /// </summary>
-    public bool IsSatisfiedBy(IEnumerable<Guid> technicianSkillIds)
+    public bool IsSatisfiedBy(IEnumerable<Skill> technicianSkills)
     {
-        ArgumentNullException.ThrowIfNull(technicianSkillIds);
+        ArgumentNullException.ThrowIfNull(technicianSkills);
 
-        return _requiredSkillIds.Count == 0
-            || !RequiredSkillIds.Except(technicianSkillIds).Any();
+        if (_requiredSkills.Count == 0)
+        {
+            return true;
+        }
+
+        var held = technicianSkills.Select(skill => skill.Id).ToHashSet();
+
+        return _requiredSkills.All(required => held.Contains(required.Id));
     }
 }

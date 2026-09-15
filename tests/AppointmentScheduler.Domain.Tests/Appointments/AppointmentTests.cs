@@ -1,5 +1,6 @@
 using AppointmentScheduler.Domain.Appointments;
 using AppointmentScheduler.Domain.Catalogue;
+using AppointmentScheduler.Domain.Resources;
 using FluentAssertions;
 using Xunit;
 
@@ -9,8 +10,8 @@ public class AppointmentTests
 {
     private static readonly DateTimeOffset NineAm = new(2026, 3, 16, 9, 0, 0, TimeSpan.Zero);
 
-    private static ServiceType OneHourService(params Guid[] requiredSkillIds) =>
-        ServiceType.Create(Guid.NewGuid(), "MOT", "MOT test", 60, requiredSkillIds: requiredSkillIds);
+    private static ServiceType OneHourService(params Skill[] requiredSkills) =>
+        ServiceType.Create(Guid.NewGuid(), "MOT", "MOT test", 60, requiredSkills: requiredSkills);
 
     private static Appointment Book(ServiceType? serviceType = null) =>
         Appointment.Book(

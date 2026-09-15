@@ -59,16 +59,19 @@ public class PersistenceTests
         var diagnostics = await AddSkillAsync(db, ct);
 
         var technician = Technician.Create(
-            Guid.NewGuid(), dealership.Id, "Ana Pham", skillIds: [brakes.Id, diagnostics.Id]);
+            Guid.NewGuid(), dealership.Id, "Ana Pham", skills: [brakes, diagnostics]);
 
         db.Technicians.Add(technician);
         await db.SaveChangesAsync(ct);
 
         await using var reading = _fixture.CreateContext();
 
-        var stored = await reading.Technicians.SingleAsync(t => t.Id == technician.Id, ct);
+        // Include: a real navigation is not loaded automatically, unlike an owned collection.
+        var stored = await reading.Technicians
+            .Include(t => t.Skills)
+            .SingleAsync(t => t.Id == technician.Id, ct);
 
-        stored.SkillIds.Should().BeEquivalentTo(new[] { brakes.Id, diagnostics.Id });
+        stored.Skills.Select(s => s.Id).Should().BeEquivalentTo(new[] { brakes.Id, diagnostics.Id });
     }
 
     [Fact]
@@ -80,16 +83,18 @@ public class PersistenceTests
         var skill = await AddSkillAsync(db, ct);
 
         var serviceType = ServiceType.Create(
-            Guid.NewGuid(), NewCode("SVC"), "Brake service", 90, requiredSkillIds: [skill.Id]);
+            Guid.NewGuid(), NewCode("SVC"), "Brake service", 90, requiredSkills: [skill]);
 
         db.ServiceTypes.Add(serviceType);
         await db.SaveChangesAsync(ct);
 
         await using var reading = _fixture.CreateContext();
 
-        var stored = await reading.ServiceTypes.SingleAsync(s => s.Id == serviceType.Id, ct);
+        var stored = await reading.ServiceTypes
+            .Include(s => s.RequiredSkills)
+            .SingleAsync(s => s.Id == serviceType.Id, ct);
 
-        stored.RequiredSkillIds.Should().BeEquivalentTo(new[] { skill.Id });
+        stored.RequiredSkills.Select(s => s.Id).Should().BeEquivalentTo(new[] { skill.Id });
         stored.Duration.Should().Be(TimeSpan.FromMinutes(90));
     }
 

@@ -1,4 +1,5 @@
 using AppointmentScheduler.Domain.Catalogue;
+using AppointmentScheduler.Domain.Resources;
 using FluentAssertions;
 using Xunit;
 
@@ -6,12 +7,12 @@ namespace AppointmentScheduler.Domain.Tests.Catalogue;
 
 public class ServiceTypeTests
 {
-    private static readonly Guid Diagnostics = Guid.NewGuid();
-    private static readonly Guid Electrical = Guid.NewGuid();
-    private static readonly Guid Bodywork = Guid.NewGuid();
+    private static readonly Skill Diagnostics = Skill.Create(Guid.NewGuid(), "DIAG", "Diagnostics");
+    private static readonly Skill Electrical = Skill.Create(Guid.NewGuid(), "ELEC", "Electrical");
+    private static readonly Skill Bodywork = Skill.Create(Guid.NewGuid(), "BODY", "Bodywork");
 
-    private static ServiceType Requiring(params Guid[] skillIds) =>
-        ServiceType.Create(Guid.NewGuid(), "SVC", "Service", 60, requiredSkillIds: skillIds);
+    private static ServiceType Requiring(params Skill[] skills) =>
+        ServiceType.Create(Guid.NewGuid(), "SVC", "Service", 60, requiredSkills: skills);
 
     [Fact]
     public void Duration_ServiceTypeCreatedWithNinetyMinutes_IsExposedAsATimeSpan()
@@ -99,18 +100,18 @@ public class ServiceTypeTests
     }
 
     [Fact]
-    public void RequiredSkillIds_DuplicateSkillsGivenAtCreation_AreDeduplicated()
+    public void RequiredSkills_DuplicateSkillsGivenAtCreation_AreDeduplicated()
     {
         var serviceType = Requiring(Diagnostics, Diagnostics, Electrical);
 
-        serviceType.RequiredSkillIds.Should().BeEquivalentTo([Diagnostics, Electrical]);
+        serviceType.RequiredSkills.Should().BeEquivalentTo([Diagnostics, Electrical]);
     }
 
     [Fact]
-    public void RequiredSkillIds_NoSkillsGivenAtCreation_DefaultsToEmpty()
+    public void RequiredSkills_NoSkillsGivenAtCreation_DefaultsToEmpty()
     {
         ServiceType.Create(Guid.NewGuid(), "SVC", "Service", 60)
-                   .RequiredSkillIds.Should().BeEmpty();
+                   .RequiredSkills.Should().BeEmpty();
     }
 
     [Theory]
