@@ -1,3 +1,5 @@
+using AppointmentScheduler.Domain.Common;
+
 namespace AppointmentScheduler.Domain.Catalogue;
 
 /// <summary>
@@ -8,7 +10,9 @@ public sealed class ServiceType
     /// <summary>The longest service the catalogue permits.</summary>
     public const int MaximumDurationMinutes = 8 * 60;
 
-    private readonly List<Guid> _requiredSkillIds = [];
+    // Backed by EntityReference rather than Guid so the ServiceTypeRequiredSkills link table has a
+    // type to map onto; RequiredSkillIds projects it away, so no caller sees the difference.
+    private readonly List<EntityReference> _requiredSkillIds = [];
 
     private ServiceType(Guid id, string code, string name, int durationMinutes, bool isActive)
     {
@@ -37,7 +41,7 @@ public sealed class ServiceType
     public bool IsActive { get; private set; }
 
     /// <summary>The skills a technician must all hold to perform this service.</summary>
-    public IReadOnlyList<Guid> RequiredSkillIds => _requiredSkillIds;
+    public IReadOnlyList<Guid> RequiredSkillIds => [.. _requiredSkillIds.Select(s => s.Id)];
 
     /// <summary>The duration as a <see cref="TimeSpan"/>, which is what <c>TimeSlot</c> consumes.</summary>
     public TimeSpan Duration => TimeSpan.FromMinutes(DurationMinutes);
@@ -65,7 +69,8 @@ public sealed class ServiceType
 
         if (requiredSkillIds is not null)
         {
-            serviceType._requiredSkillIds.AddRange(requiredSkillIds.Distinct());
+            serviceType._requiredSkillIds.AddRange(
+                requiredSkillIds.Distinct().Select(id => new EntityReference(id)));
         }
 
         return serviceType;
@@ -79,6 +84,6 @@ public sealed class ServiceType
         ArgumentNullException.ThrowIfNull(technicianSkillIds);
 
         return _requiredSkillIds.Count == 0
-            || !_requiredSkillIds.Except(technicianSkillIds).Any();
+            || !RequiredSkillIds.Except(technicianSkillIds).Any();
     }
 }

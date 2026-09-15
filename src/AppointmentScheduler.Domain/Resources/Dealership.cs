@@ -7,7 +7,7 @@ namespace AppointmentScheduler.Domain.Resources;
 /// </summary>
 public sealed class Dealership
 {
-    private readonly Dictionary<DayOfWeek, OpeningHours> _openingHours = [];
+    private readonly List<OpeningHoursEntry> _openingHours = [];
 
     private Dealership(Guid id, string name, string timeZoneId)
     {
@@ -30,7 +30,8 @@ public sealed class Dealership
     /// <summary>An IANA time zone id, for example <c>Asia/Ho_Chi_Minh</c>.</summary>
     public string TimeZoneId { get; private set; }
 
-    public IReadOnlyCollection<OpeningHours> OpeningHours => _openingHours.Values;
+    public IReadOnlyCollection<OpeningHours> OpeningHours =>
+        [.. _openingHours.Select(entry => entry.ToOpeningHours())];
 
     public static Dealership Create(
         Guid id,
@@ -52,11 +53,15 @@ public sealed class Dealership
     }
 
     /// <summary>Sets the hours for a day, replacing any already recorded for that day.</summary>
-    public void SetOpeningHours(OpeningHours hours) => _openingHours[hours.DayOfWeek] = hours;
+    public void SetOpeningHours(OpeningHours hours)
+    {
+        _openingHours.RemoveAll(entry => entry.DayOfWeek == hours.DayOfWeek);
+        _openingHours.Add(new OpeningHoursEntry(hours));
+    }
 
     /// <summary>The hours for <paramref name="dayOfWeek"/>, or null when closed that day.</summary>
     public OpeningHours? HoursOn(DayOfWeek dayOfWeek) =>
-        _openingHours.TryGetValue(dayOfWeek, out var hours) ? hours : null;
+        _openingHours.FirstOrDefault(entry => entry.DayOfWeek == dayOfWeek)?.ToOpeningHours();
 
     /// <summary>
     /// The opening window for <paramref name="localDate"/> as an absolute interval, or null when

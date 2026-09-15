@@ -8,7 +8,7 @@ namespace AppointmentScheduler.Domain.Resources;
 /// </summary>
 public sealed class Technician : IVersioned
 {
-    private readonly List<Guid> _skillIds = [];
+    private readonly List<EntityReference> _skillIds = [];
 
     private Technician(Guid id, Guid dealershipId, string fullName, bool isActive)
     {
@@ -36,7 +36,7 @@ public sealed class Technician : IVersioned
     public int Version { get; set; }
 
     /// <summary>The skills this technician holds.</summary>
-    public IReadOnlyList<Guid> SkillIds => _skillIds;
+    public IReadOnlyList<Guid> SkillIds => [.. _skillIds.Select(s => s.Id)];
 
     public static Technician Create(
         Guid id,
@@ -51,7 +51,7 @@ public sealed class Technician : IVersioned
 
         if (skillIds is not null)
         {
-            technician._skillIds.AddRange(skillIds.Distinct());
+            technician._skillIds.AddRange(skillIds.Distinct().Select(id => new EntityReference(id)));
         }
 
         return technician;
@@ -62,6 +62,6 @@ public sealed class Technician : IVersioned
     {
         ArgumentNullException.ThrowIfNull(serviceType);
 
-        return serviceType.IsSatisfiedBy(_skillIds);
+        return serviceType.IsSatisfiedBy(SkillIds);
     }
 }

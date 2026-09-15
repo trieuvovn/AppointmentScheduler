@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AppointmentScheduler.Api\AppointmentScheduler.Api.csproj" />
+    <ProjectReference Include="..\..\src\AppointmentScheduler.Infrastructure\AppointmentScheduler.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\AppointmentScheduler.DatabaseMigration\AppointmentScheduler.DatabaseMigration.csproj" />
   </ItemGroup>
 

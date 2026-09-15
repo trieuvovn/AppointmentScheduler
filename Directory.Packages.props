@@ -10,6 +10,12 @@
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
   </ItemGroup>
 
+  <ItemGroup Label="Infrastructure">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.12" />
+  </ItemGroup>
+
   <ItemGroup Label="Migration">
     <PackageVersion Include="dbup-sqlserver" Version="7.2.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.CommandLine" Version="10.0.12" />
@@ -26,6 +32,8 @@
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.12" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.15.0" />
+    <!-- FakeTimeProvider: the test-side half of the TimeProvider seam (plan 2.7). -->
+    <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.0.0" />
   </ItemGroup>
 
 </Project>

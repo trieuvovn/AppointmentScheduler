@@ -4,4 +4,11 @@
     <ProjectReference Include="..\AppointmentScheduler.Application\AppointmentScheduler.Application.csproj" />
   </ItemGroup>
 
+  <!-- The provider is named here and in DependencyInjection.cs only (plan 1.1). -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+  </ItemGroup>
+
 </Project>
