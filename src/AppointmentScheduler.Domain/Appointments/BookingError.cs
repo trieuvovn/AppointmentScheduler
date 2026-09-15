@@ -25,4 +25,10 @@ public enum BookingError
 
     /// <summary>The requested status change is not legal from the current status.</summary>
     InvalidStatusTransition = 8,
+
+    /// <summary>The dealership does not exist.</summary>
+    DealershipNotFound = 9,
+
+    /// <summary>The service type does not exist.</summary>
+    ServiceTypeNotFound = 10,
 }

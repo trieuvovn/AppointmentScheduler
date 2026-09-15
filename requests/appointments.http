@@ -1,0 +1,19 @@
+@host = http://localhost:5109
+@dealershipId = 1a0b0000-0000-4000-8000-00000000000d
+@oilChangeId = 3c2b0d50-0000-4000-8000-000000000001
+@evBatteryCheckId = 3c2b0d50-0000-4000-8000-000000000007
+
+### Liveness probe
+GET {{host}}/health
+
+### Availability — a seeded weekday, oil change (picks Alina, the narrowest-skilled free technician)
+GET {{host}}/api/v1/availability?dealershipId={{dealershipId}}&serviceTypeId={{oilChangeId}}&date=2026-03-02
+
+### Availability — closed day (Sunday): 200 with opensAtUtc null and no slots
+GET {{host}}/api/v1/availability?dealershipId={{dealershipId}}&serviceTypeId={{oilChangeId}}&date=2026-03-01
+
+### Availability — Saturday, EV battery check: only the 09:00 slot fits the 09:00-13:00 window
+GET {{host}}/api/v1/availability?dealershipId={{dealershipId}}&serviceTypeId={{evBatteryCheckId}}&date=2026-03-07
+
+### Availability — unknown dealership: 404
+GET {{host}}/api/v1/availability?dealershipId=00000000-0000-0000-0000-000000000000&serviceTypeId={{oilChangeId}}&date=2026-03-02

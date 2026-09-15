@@ -30,4 +30,13 @@ internal static class OccupyingExtensions
 
         return appointments.Where(a => a.StartsAtUtc < slot.End && a.EndsAtUtc > slot.Start);
     }
+
+    /// <summary>
+    /// Narrows to the appointments overlapping <paramref name="window"/> — the same predicate as
+    /// <see cref="OverlappingWith"/>, named for the day-view query that loads a whole day's busy
+    /// intervals in one round trip rather than once per candidate slot.
+    /// </summary>
+    internal static IQueryable<Appointment> WithinWindow(
+        this IQueryable<Appointment> appointments, TimeSlot window) =>
+        appointments.OverlappingWith(window);
 }
