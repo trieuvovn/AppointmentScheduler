@@ -17,6 +17,12 @@ public sealed class UnitOfWork : IUnitOfWork
         Func<CancellationToken, Task<T>> work, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(work);
+        
+        if (_db.Database.CurrentTransaction is not null)
+        {
+            return work(cancellationToken);
+        }
+
         var strategy = _db.Database.CreateExecutionStrategy();
 
         return strategy.ExecuteAsync(async ct =>
