@@ -18,22 +18,22 @@ public class HealthEndpointTests : IDisposable
     }
 
     [Fact]
-    public async Task Get_HealthEndpoint_ReturnsOk()
+    public async Task Get_HealthLiveEndpoint_ReturnsOk()
     {
         using var client = _factory.CreateClient();
 
-        using var response = await client.GetAsync("/health", TestContext.Current.CancellationToken);
+        using var response = await client.GetAsync("/health/live", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task Get_HealthEndpoint_ReportsHealthy()
+    public async Task Get_HealthReadyEndpoint_ReturnsOk()
     {
         using var client = _factory.CreateClient();
 
-        var body = await client.GetStringAsync("/health", TestContext.Current.CancellationToken);
+        using var response = await client.GetAsync("/health/ready", TestContext.Current.CancellationToken);
 
-        body.Should().Contain("Healthy");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

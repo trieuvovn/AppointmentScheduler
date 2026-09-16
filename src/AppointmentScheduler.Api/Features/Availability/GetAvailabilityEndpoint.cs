@@ -21,6 +21,7 @@ public static class GetAvailabilityEndpoint
         Guid serviceTypeId,
         DateOnly date,
         GetAvailabilityHandler handler,
+        HttpContext httpContext,
         CancellationToken ct)
     {
         var request = new GetAvailabilityRequest(dealershipId, serviceTypeId, date);
@@ -32,6 +33,6 @@ public static class GetAvailabilityEndpoint
             return Results.Ok(result.Value);
         }
 
-        return BookingProblem.From(result.Error, result.Detail);
+        return BookingProblem.From(result.Error, result.Detail, httpContext);
     }
 }

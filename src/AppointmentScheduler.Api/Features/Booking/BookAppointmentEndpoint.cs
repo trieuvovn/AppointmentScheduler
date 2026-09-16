@@ -34,6 +34,6 @@ public static class BookAppointmentEndpoint
 
         return result.IsSuccess
             ? Results.Ok(result.Value)
-            : BookingProblem.From(result.Error, result.Detail);
+            : BookingProblem.From(result.Error, result.Detail, httpRequest.HttpContext);
     }
 }

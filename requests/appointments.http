@@ -4,7 +4,13 @@
 @evBatteryCheckId = 3c2b0d50-0000-4000-8000-000000000007
 
 ### Liveness probe
-GET {{host}}/health
+GET {{host}}/health/live
+
+### Readiness probe — actually queries the database
+GET {{host}}/health/ready
+
+### OpenAPI document (also browsable via the Scalar UI at {{host}}/scalar/v1)
+GET {{host}}/openapi/v1.json
 
 ### Availability — a seeded weekday, oil change (picks Alina, the narrowest-skilled free technician)
 GET {{host}}/api/v1/availability?dealershipId={{dealershipId}}&serviceTypeId={{oilChangeId}}&date=2026-03-02
@@ -38,6 +44,21 @@ Content-Type: application/json
 
 {
   "dealershipId": "00000000-0000-0000-0000-000000000000",
+  "serviceTypeId": "{{oilChangeId}}",
+  "vehicleId": "00000000-0000-0000-0000-000000000000",
+  "customerId": "00000000-0000-0000-0000-000000000000",
+  "startsAtUtc": "2026-03-02T09:00:00+00:00"
+}
+
+### Book the same slot again — 409 with correlationId in both the response header and the
+### problem body. Run the "Book an appointment" request above first so the slot is already taken,
+### then send this one; the X-Correlation-Id header and the JSON body's correlationId extension match.
+POST {{host}}/api/v1/appointments
+Content-Type: application/json
+X-Correlation-Id: demo-conflict-001
+
+{
+  "dealershipId": "{{dealershipId}}",
   "serviceTypeId": "{{oilChangeId}}",
   "vehicleId": "00000000-0000-0000-0000-000000000000",
   "customerId": "00000000-0000-0000-0000-000000000000",
