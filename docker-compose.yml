@@ -1,4 +1,4 @@
-# Local database only. The API and the migrator run on the host.
+# Full stack: database, migrator (one-shot) and API all run in Docker.
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -22,6 +22,33 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
+
+  migrator:
+    build:
+      context: .
+      dockerfile: src/AppointmentScheduler.DatabaseMigration/Dockerfile
+    container_name: appointmentscheduler-migrator
+    command: ["--demo"]
+    environment:
+      ConnectionStrings__AppointmentScheduler: "Server=sqlserver;Database=AppointmentScheduler;User Id=sa;Password=Your_strong_Passw0rd;TrustServerCertificate=True"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: src/AppointmentScheduler.Api/Dockerfile
+    container_name: appointmentscheduler-api
+    ports:
+      - "5109:8080"
+    environment:
+      ConnectionStrings__AppointmentScheduler: "Server=sqlserver;Database=AppointmentScheduler;User Id=sa;Password=Your_strong_Passw0rd;TrustServerCertificate=True"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      migrator:
+        condition: service_completed_successfully
 
 volumes:
   sqlserver-data:

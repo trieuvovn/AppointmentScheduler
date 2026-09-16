@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/out/
+**/artifacts/
+**/TestResults/
+.vs/
+.git/
+.gitignore
+docs/
+requests/
+*.md
