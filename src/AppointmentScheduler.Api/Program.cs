@@ -1,4 +1,5 @@
 using AppointmentScheduler.Api.Features.Availability;
+using AppointmentScheduler.Api.Features.Booking;
 using AppointmentScheduler.Application;
 using AppointmentScheduler.Infrastructure;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,8 +11,9 @@ var connectionString = builder.Configuration.GetConnectionString("AppointmentSch
         "Connection string 'AppointmentScheduler' is not configured.");
 
 builder.Services.AddOpenApi();
+builder.Services.AddProblemDetails();
 builder.Services.AddInfrastructure(connectionString);
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -25,6 +27,7 @@ app.MapGet("/health", () => Results.Ok(new HealthResponse("Healthy")))
    .WithSummary("Liveness probe.");
 
 app.MapAvailabilityEndpoints();
+app.MapAppointmentEndpoints();
 
 app.Run();
 

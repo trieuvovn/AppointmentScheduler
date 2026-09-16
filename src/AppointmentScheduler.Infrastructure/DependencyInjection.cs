@@ -1,5 +1,6 @@
 using AppointmentScheduler.Application.Common;
 using AppointmentScheduler.Application.Features.Availability;
+using AppointmentScheduler.Application.Features.Booking;
 using AppointmentScheduler.Infrastructure.Persistence;
 using AppointmentScheduler.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
+        services.AddScoped<IAppointmentRepository, AppointmentRepository>();
         services.TryAddSingleton(TimeProvider.System);
 
         return services;

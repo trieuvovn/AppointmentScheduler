@@ -31,4 +31,10 @@ public enum BookingError
 
     /// <summary>The service type does not exist.</summary>
     ServiceTypeNotFound = 10,
+
+    /// <summary>The appointment does not exist.</summary>
+    AppointmentNotFound = 11,
+
+    /// <summary>The vehicle does not exist, or does not belong to the given customer.</summary>
+    VehicleNotFound = 12,
 }

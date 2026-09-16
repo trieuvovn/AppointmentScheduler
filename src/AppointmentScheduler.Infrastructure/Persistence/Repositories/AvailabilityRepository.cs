@@ -113,6 +113,11 @@ internal sealed class AvailabilityRepository : IAvailabilityRepository
             .ToListAsync(ct);
     }
 
+    public async Task<bool> IsStillFreeAsync(
+        Guid serviceBayId, Guid technicianId, TimeSlot slot, CancellationToken ct) =>
+        !await _db.Appointments.Occupying().OverlappingWith(slot)
+            .AnyAsync(a => a.ServiceBayId == serviceBayId || a.TechnicianId == technicianId, ct);
+
     /// <summary>
     /// True when the technician holds every skill <paramref name="serviceTypeId"/> requires.
     /// Relational division via double negation: there is no required skill the technician is

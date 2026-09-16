@@ -114,6 +114,15 @@ public sealed class FakeAvailabilityRepository : IAvailabilityRepository
         return Task.FromResult(result);
     }
 
+    public Task<bool> IsStillFreeAsync(
+        Guid serviceBayId, Guid technicianId, TimeSlot slot, CancellationToken ct)
+    {
+        var stillFree = !_occupied.Any(o =>
+            (o.ServiceBayId == serviceBayId || o.TechnicianId == technicianId) && o.Slot.Overlaps(slot));
+
+        return Task.FromResult(stillFree);
+    }
+
     private List<TimeSlot> BusyIntervalsForBay(Guid bayId, TimeSlot window) =>
         _occupied
             .Where(o => o.ServiceBayId == bayId && o.Slot.Overlaps(window))

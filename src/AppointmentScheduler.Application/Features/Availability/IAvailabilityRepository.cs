@@ -23,4 +23,6 @@ public interface IAvailabilityRepository
 
     Task<IReadOnlyList<Technician>> FindFreeQualifiedTechniciansAsync(
         Guid dealershipId, Guid serviceTypeId, TimeSlot slot, CancellationToken ct);
+    Task<bool> IsStillFreeAsync(
+        Guid serviceBayId, Guid technicianId, TimeSlot slot, CancellationToken ct);
 }

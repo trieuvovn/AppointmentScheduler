@@ -17,3 +17,29 @@ GET {{host}}/api/v1/availability?dealershipId={{dealershipId}}&serviceTypeId={{e
 
 ### Availability — unknown dealership: 404
 GET {{host}}/api/v1/availability?dealershipId=00000000-0000-0000-0000-000000000000&serviceTypeId={{oilChangeId}}&date=2026-03-02
+
+### Book an appointment — pick a startsAtUtc from the availability response above, and real
+### customer/vehicle ids from the demo data (see Demo/0201_CustomersAndVehicles.sql)
+POST {{host}}/api/v1/appointments
+Content-Type: application/json
+Idempotency-Key: sample-key-001
+
+{
+  "dealershipId": "{{dealershipId}}",
+  "serviceTypeId": "{{oilChangeId}}",
+  "vehicleId": "00000000-0000-0000-0000-000000000000",
+  "customerId": "00000000-0000-0000-0000-000000000000",
+  "startsAtUtc": "2026-03-02T09:00:00+00:00"
+}
+
+### Book an appointment — malformed body (empty dealershipId): 400 ValidationProblemDetails
+POST {{host}}/api/v1/appointments
+Content-Type: application/json
+
+{
+  "dealershipId": "00000000-0000-0000-0000-000000000000",
+  "serviceTypeId": "{{oilChangeId}}",
+  "vehicleId": "00000000-0000-0000-0000-000000000000",
+  "customerId": "00000000-0000-0000-0000-000000000000",
+  "startsAtUtc": "2026-03-02T09:00:00+00:00"
+}

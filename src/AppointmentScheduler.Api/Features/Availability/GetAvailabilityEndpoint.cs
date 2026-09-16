@@ -1,5 +1,5 @@
+using AppointmentScheduler.Api.Common;
 using AppointmentScheduler.Application.Features.Availability;
-using AppointmentScheduler.Domain.Appointments;
 
 namespace AppointmentScheduler.Api.Features.Availability;
 
@@ -32,14 +32,6 @@ public static class GetAvailabilityEndpoint
             return Results.Ok(result.Value);
         }
 
-        return result.Error switch
-        {
-            BookingError.DealershipNotFound => Results.Problem(
-                title: "Dealership not found", statusCode: StatusCodes.Status404NotFound),
-            BookingError.ServiceTypeNotFound => Results.Problem(
-                title: "Service type not found", statusCode: StatusCodes.Status404NotFound),
-            _ => Results.Problem(
-                title: "The request could not be processed", statusCode: StatusCodes.Status422UnprocessableEntity),
-        };
+        return BookingProblem.From(result.Error, result.Detail);
     }
 }

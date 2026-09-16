@@ -24,6 +24,7 @@ internal sealed class AppointmentConfiguration : IEntityTypeConfiguration<Appoin
         builder.Property(a => a.EndsAtUtc).IsRequired();
         builder.Property(a => a.CreatedAtUtc).IsRequired();
         builder.Property(a => a.Status).HasConversion<string>().IsRequired();
+        builder.Property(a => a.IdempotencyKey).HasMaxLength(64).IsUnicode(false);
         builder.Property(a => a.Version).IsConcurrencyToken();
         builder.Ignore(a => a.Slot);
         builder.Ignore(a => a.Occupies);
