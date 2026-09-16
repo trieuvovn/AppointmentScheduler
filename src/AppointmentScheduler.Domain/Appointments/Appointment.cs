@@ -120,9 +120,6 @@ public sealed class Appointment : IVersioned
     /// <summary>Cancels the appointment, freeing its bay and technician.</summary>
     public void Cancel() => TransitionTo(AppointmentStatus.Cancelled);
 
-    /// <summary>Records that the customer did not arrive.</summary>
-    public void MarkNoShow() => TransitionTo(AppointmentStatus.NoShow);
-
     /// <summary>True when <paramref name="target"/> is reachable from the current status.</summary>
     public bool CanTransitionTo(AppointmentStatus target) => IsAllowed(Status, target);
 
@@ -137,15 +134,14 @@ public sealed class Appointment : IVersioned
     }
 
     /// <summary>
-    /// The transition table. Confirmed may start, complete early, cancel or no-show; InProgress may
-    /// only finish or be cancelled; the three terminal statuses admit nothing.
+    /// The transition table. Confirmed may start, complete early or cancel; InProgress may only finish
+    /// or be cancelled; the two terminal statuses admit nothing.
     /// </summary>
     private static bool IsAllowed(AppointmentStatus from, AppointmentStatus to) => (from, to) switch
     {
         (AppointmentStatus.Confirmed, AppointmentStatus.InProgress) => true,
         (AppointmentStatus.Confirmed, AppointmentStatus.Completed) => true,
         (AppointmentStatus.Confirmed, AppointmentStatus.Cancelled) => true,
-        (AppointmentStatus.Confirmed, AppointmentStatus.NoShow) => true,
 
         (AppointmentStatus.InProgress, AppointmentStatus.Completed) => true,
         (AppointmentStatus.InProgress, AppointmentStatus.Cancelled) => true,

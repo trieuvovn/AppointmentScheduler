@@ -16,7 +16,7 @@ CREATE TABLE Appointments (
 
     CONSTRAINT CK_Appointments_Interval CHECK (EndsAtUtc > StartsAtUtc),
     CONSTRAINT CK_Appointments_Status CHECK (
-        Status IN ('Confirmed', 'InProgress', 'Completed', 'Cancelled', 'NoShow')),
+        Status IN ('Confirmed', 'InProgress', 'Completed', 'Cancelled')),
 
     CONSTRAINT FK_Appointments_ServiceType FOREIGN KEY (ServiceTypeId) REFERENCES ServiceTypes(Id),
 

@@ -16,7 +16,4 @@ public enum AppointmentStatus
 
     /// <summary>Called off. Frees its resources immediately (plan stage 5).</summary>
     Cancelled = 4,
-
-    /// <summary>The customer never arrived. Frees its resources.</summary>
-    NoShow = 5,
 }

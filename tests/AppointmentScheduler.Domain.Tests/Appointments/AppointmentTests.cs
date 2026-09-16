@@ -43,9 +43,6 @@ public class AppointmentTests
             case AppointmentStatus.Cancelled:
                 appointment.Cancel();
                 break;
-            case AppointmentStatus.NoShow:
-                appointment.MarkNoShow();
-                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(status), status, null);
         }
@@ -97,7 +94,6 @@ public class AppointmentTests
     [InlineData(AppointmentStatus.Confirmed, AppointmentStatus.InProgress)]
     [InlineData(AppointmentStatus.Confirmed, AppointmentStatus.Completed)]
     [InlineData(AppointmentStatus.Confirmed, AppointmentStatus.Cancelled)]
-    [InlineData(AppointmentStatus.Confirmed, AppointmentStatus.NoShow)]
     [InlineData(AppointmentStatus.InProgress, AppointmentStatus.Completed)]
     [InlineData(AppointmentStatus.InProgress, AppointmentStatus.Cancelled)]
     public void CanTransitionTo_LegalMoveForTheCurrentStatus_ReturnsTrue(AppointmentStatus from, AppointmentStatus to)
@@ -109,15 +105,11 @@ public class AppointmentTests
     // Nothing may leave a terminal status.
     [InlineData(AppointmentStatus.Completed, AppointmentStatus.InProgress)]
     [InlineData(AppointmentStatus.Completed, AppointmentStatus.Cancelled)]
-    [InlineData(AppointmentStatus.Completed, AppointmentStatus.NoShow)]
     [InlineData(AppointmentStatus.Cancelled, AppointmentStatus.Confirmed)]
     [InlineData(AppointmentStatus.Cancelled, AppointmentStatus.InProgress)]
     [InlineData(AppointmentStatus.Cancelled, AppointmentStatus.Completed)]
-    [InlineData(AppointmentStatus.NoShow, AppointmentStatus.Confirmed)]
-    [InlineData(AppointmentStatus.NoShow, AppointmentStatus.InProgress)]
-    // Work that has started cannot be un-started, and no-show contradicts it.
+    // Work that has started cannot be un-started.
     [InlineData(AppointmentStatus.InProgress, AppointmentStatus.Confirmed)]
-    [InlineData(AppointmentStatus.InProgress, AppointmentStatus.NoShow)]
     // A status cannot be re-entered.
     [InlineData(AppointmentStatus.Confirmed, AppointmentStatus.Confirmed)]
     [InlineData(AppointmentStatus.InProgress, AppointmentStatus.InProgress)]
@@ -149,7 +141,6 @@ public class AppointmentTests
     [Theory]
     [InlineData(AppointmentStatus.Completed)]
     [InlineData(AppointmentStatus.Cancelled)]
-    [InlineData(AppointmentStatus.NoShow)]
     public void Start_AppointmentAlreadyInATerminalStatus_ThrowsInvalidStatusTransitionException(AppointmentStatus status)
     {
         var appointment = InStatus(status);
@@ -198,7 +189,6 @@ public class AppointmentTests
     [InlineData(AppointmentStatus.InProgress, true)]
     [InlineData(AppointmentStatus.Completed, false)]
     [InlineData(AppointmentStatus.Cancelled, false)]
-    [InlineData(AppointmentStatus.NoShow, false)]
     public void Occupies_GivenStatus_ReturnsTrueOnlyForConfirmedAndInProgress(AppointmentStatus status, bool occupies)
     {
         InStatus(status).Occupies.Should().Be(occupies);
