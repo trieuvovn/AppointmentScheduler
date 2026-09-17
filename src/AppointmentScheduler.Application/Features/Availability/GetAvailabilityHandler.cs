@@ -45,9 +45,9 @@ public sealed class GetAvailabilityHandler
         var assignments = AvailabilitySearch.SearchDay(window, serviceType.Duration, bays, technicians);
 
         var slots = assignments
-            .Select(a => new AvailableSlotResponse(a.Slot.Start, a.Slot.End))
+            .Select(a => new AvailableSlotResponse(a.Slot.Start.ToUniversalTime(), a.Slot.End.ToUniversalTime()))
             .ToList();
 
-        return Result.Success(new GetAvailabilityResponse(window.Start, slots));
+        return Result.Success(new GetAvailabilityResponse(window.Start.ToUniversalTime(), slots));
     }
 }
